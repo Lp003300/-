@@ -1,0 +1,580 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>新洲项目造价咨询工作计划表 - 多人协作版</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Microsoft YaHei', Arial, sans-serif;
+        }
+        
+        body {
+            background-color: #f5f7fa;
+            color: #333;
+            line-height: 1.6;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+        
+        header {
+            background: linear-gradient(135deg, #1e6bb8 0%, #2c92d4 100%);
+            color: white;
+            padding: 20px 30px;
+        }
+        
+        h1 {
+            font-size: 24px;
+            margin-bottom: 10px;
+        }
+        
+        .subtitle {
+            font-size: 16px;
+            opacity: 0.9;
+        }
+        
+        .toolbar {
+            background-color: #f0f4f8;
+            padding: 15px 20px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            align-items: center;
+            border-bottom: 1px solid #e1e8ed;
+        }
+        
+        .toolbar button {
+            padding: 8px 16px;
+            background-color: white;
+            border: 1px solid #d1d9e0;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .toolbar button:hover {
+            background-color: #f7f9fb;
+        }
+        
+        .toolbar button.primary {
+            background-color: #1e6bb8;
+            color: white;
+            border-color: #1a5fa3;
+        }
+        
+        .toolbar button.primary:hover {
+            background-color: #1a5fa3;
+        }
+        
+        .table-container {
+            overflow-x: auto;
+            max-height: 600px;
+            overflow-y: auto;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            min-width: 1200px;
+        }
+        
+        th, td {
+            padding: 12px 15px;
+            text-align: left;
+            border-bottom: 1px solid #e1e8ed;
+        }
+        
+        th {
+            background-color: #f8fafc;
+            font-weight: 600;
+            color: #4a5568;
+            position: sticky;
+            top: 0;
+        }
+        
+        tr:hover {
+            background-color: #f7fafc;
+        }
+        
+        .status {
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+        
+        .status.completed {
+            background-color: #e3f7e9;
+            color: #1e874b;
+        }
+        
+        .status.in-progress {
+            background-color: #fff4e6;
+            color: #e67c00;
+        }
+        
+        .status.not-started {
+            background-color: #f0f4f8;
+            color: #64748b;
+        }
+        
+        .priority {
+            display: inline-block;
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            margin-right: 5px;
+        }
+        
+        .priority.high {
+            background-color: #e53935;
+        }
+        
+        .priority.medium {
+            background-color: #ff9800;
+        }
+        
+        .priority.low {
+            background-color: #43a047;
+        }
+        
+        .progress-bar-container {
+            width: 100%;
+            height: 6px;
+            background-color: #e1e8ed;
+            border-radius: 3px;
+            overflow: hidden;
+        }
+        
+        .progress-bar {
+            height: 100%;
+            border-radius: 3px;
+        }
+        
+        .progress-text {
+            font-size: 12px;
+            color: #64748b;
+            margin-top: 4px;
+        }
+        
+        .summary {
+            display: flex;
+            justify-content: space-around;
+            padding: 20px;
+            background-color: #f0f4f8;
+            border-top: 1px solid #e1e8ed;
+        }
+        
+        .summary-item {
+            text-align: center;
+        }
+        
+        .summary-value {
+            font-size: 24px;
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+        
+        .summary-label {
+            font-size: 14px;
+            color: #64748b;
+        }
+        
+        footer {
+            padding: 15px;
+            text-align: center;
+            color: #64748b;
+            font-size: 14px;
+            border-top: 1px solid #e1e8ed;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>新洲项目公司【造价咨询】工作计划表</h1>
+            <div class="subtitle">网络协作版 | 已部署到 Netlify</div>
+        </header>
+        
+        <div class="toolbar">
+            <button onclick="addNewTask()" class="primary">+ 新增任务</button>
+            <button onclick="saveData()">保存数据</button>
+            <button onclick="exportToExcel()">导出Excel</button>
+            
+            <div style="margin-left: auto; display: flex; align-items: center; gap: 10px;">
+                <label for="status-filter">状态筛选:</label>
+                <select id="status-filter" onchange="filterByStatus()">
+                    <option value="all">全部状态</option>
+                    <option value="completed">已完成</option>
+                    <option value="in-progress">进行中</option>
+                    <option value="not-started">未开始</option>
+                </select>
+                
+                <input type="text" id="search-box" placeholder="搜索工作事项或责任人..." onkeyup="searchTable()" style="padding: 8px; border: 1px solid #d1d9e0; border-radius: 4px;">
+            </div>
+        </div>
+        
+        <div class="table-container">
+            <table id="workplan-table">
+                <thead>
+                    <tr>
+                        <th width="5%">序号</th>
+                        <th width="20%">工作事项</th>
+                        <th width="10%">业务分类</th>
+                        <th width="10%">责任人</th>
+                        <th width="10%">计划开始时间</th>
+                        <th width="10%">计划完成时间</th>
+                        <th width="10%">当前进度</th>
+                        <th width="10%">状态</th>
+                        <th width="5%">优先级</th>
+                        <th width="10%">操作</th>
+                    </tr>
+                </thead>
+                <tbody id="table-body">
+                    <!-- 表格数据将通过JavaScript动态生成 -->
+                </tbody>
+            </table>
+        </div>
+        
+        <div class="summary">
+            <div class="summary-item">
+                <div class="summary-value" id="total-tasks">0</div>
+                <div class="summary-label">总任务数</div>
+            </div>
+            <div class="summary-item">
+                <div class="summary-value" id="completed-tasks">0</div>
+                <div class="summary-label">已完成</div>
+            </div>
+            <div class="summary-item">
+                <div class="summary-value" id="in-progress-tasks">0</div>
+                <div class="summary-label">进行中</div>
+            </div>
+            <div class="summary-item">
+                <div class="summary-value" id="not-started-tasks">0</div>
+                <div class="summary-label">未开始</div>
+            </div>
+        </div>
+        
+        <footer>
+            <p>此表格已部署到 Netlify，可通过链接分享给团队成员 | 最后更新: <span id="current-date"></span></p>
+        </footer>
+    </div>
+
+    <script>
+        // 示例数据
+        let workPlans = {
+            "12-3": [
+                { id: 1, task: "E地块粗装修建模", category: "结算", responsible: "陈玉婷", startDate: "2024-03-15", endDate: "2024-05-15", progress: 70, status: "进行中", priority: "medium" },
+                { id: 2, task: "W1地块总包重计量核对", category: "结算", responsible: "张博文", startDate: "2024-05-10", endDate: "2024-11-15", progress: 0, status: "未开始", priority: "high" },
+                { id: 3, task: "原办公室精装修改造结算", category: "结算", responsible: "桂鹏", startDate: "2024-04-20", endDate: "2024-12-10", progress: 30, status: "进行中", priority: "medium" },
+                { id: 4, task: "E地块7#8#9#楼景观结算", category: "结算", responsible: "庄容", startDate: "2024-05-05", endDate: "2024-06-05", progress: 95, status: "进行中", priority: "high" },
+                { id: 5, task: "C1地块园林景观工程结算", category: "结算", responsible: "桂鹏", startDate: "2024-05-05", endDate: "2024-06-05", progress: 90, status: "进行中", priority: "high" }
+            ]
+        };
+
+        // 页面加载时初始化表格
+        document.addEventListener('DOMContentLoaded', function() {
+            // 设置当前日期
+            document.getElementById('current-date').textContent = new Date().toLocaleDateString('zh-CN');
+            
+            // 从本地存储加载数据
+            loadFromLocalStorage();
+            
+            // 渲染表格
+            renderTable(getAllTasks());
+        });
+
+        // 获取所有任务
+        function getAllTasks() {
+            let allTasks = [];
+            for (let week in workPlans) {
+                allTasks = allTasks.concat(workPlans[week]);
+            }
+            return allTasks;
+        }
+
+        // 渲染表格
+        function renderTable(data) {
+            const tbody = document.getElementById('table-body');
+            tbody.innerHTML = '';
+            
+            let completedCount = 0;
+            let inProgressCount = 0;
+            let notStartedCount = 0;
+            
+            data.forEach((item, index) => {
+                const row = document.createElement('tr');
+                
+                // 获取状态
+                let status = item.status;
+                if (!status) {
+                    if (item.progress >= 100) {
+                        status = '已完成';
+                    } else if (item.progress > 0 && item.progress < 100) {
+                        status = '进行中';
+                    } else {
+                        status = '未开始';
+                    }
+                }
+                
+                // 更新统计
+                if (status === '已完成') completedCount++;
+                if (status === '进行中') inProgressCount++;
+                if (status === '未开始') notStartedCount++;
+                
+                row.innerHTML = `
+                    <td>${index + 1}</td>
+                    <td>
+                        <span class="priority ${item.priority}"></span>
+                        ${item.task}
+                    </td>
+                    <td>${item.category}</td>
+                    <td>${item.responsible}</td>
+                    <td>${item.startDate}</td>
+                    <td>${item.endDate}</td>
+                    <td>
+                        <div class="progress-bar-container">
+                            <div class="progress-bar" style="width: ${item.progress}%; background-color: ${getProgressColor(item.progress)};"></div>
+                        </div>
+                        <div class="progress-text">${item.progress}%</div>
+                    </td>
+                    <td>
+                        <span class="status ${getStatusClass(status)}">${status}</span>
+                    </td>
+                    <td>
+                        <select onchange="updatePriority(${item.id}, this.value)">
+                            <option value="high" ${item.priority === 'high' ? 'selected' : ''}>高</option>
+                            <option value="medium" ${item.priority === 'medium' ? 'selected' : ''}>中</option>
+                            <option value="low" ${item.priority === 'low' ? 'selected' : ''}>低</option>
+                        </select>
+                    </td>
+                    <td>
+                        <button onclick="editTask(${item.id})">编辑</button>
+                        <button onclick="deleteTask(${item.id})" style="color: #e53935; margin-left: 5px;">删除</button>
+                    </td>
+                `;
+                
+                tbody.appendChild(row);
+            });
+            
+            // 更新统计信息
+            document.getElementById('total-tasks').textContent = data.length;
+            document.getElementById('completed-tasks').textContent = completedCount;
+            document.getElementById('in-progress-tasks').textContent = inProgressCount;
+            document.getElementById('not-started-tasks').textContent = notStartedCount;
+        }
+
+        // 根据进度获取颜色
+        function getProgressColor(progress) {
+            if (progress >= 80) return '#4CAF50';
+            if (progress >= 50) return '#FF9800';
+            return '#F44336';
+        }
+
+        // 根据状态获取CSS类
+        function getStatusClass(status) {
+            switch(status) {
+                case '已完成': return 'completed';
+                case '进行中': return 'in-progress';
+                case '未开始': return 'not-started';
+                default: return '';
+            }
+        }
+
+        // 添加新任务
+        function addNewTask() {
+            const newId = Date.now();
+            const today = new Date().toISOString().split('T')[0];
+            
+            const newTask = {
+                id: newId,
+                task: prompt('请输入工作事项名称:') || '新任务',
+                category: prompt('请输入业务分类:') || '结算',
+                responsible: prompt('请输入责任人:') || '未分配',
+                startDate: prompt('请输入开始时间 (YYYY-MM-DD):', today) || today,
+                endDate: prompt('请输入完成时间 (YYYY-MM-DD):', today) || today,
+                progress: parseInt(prompt('请输入进度 (0-100):', '0')) || 0,
+                priority: 'medium'
+            };
+            
+            // 添加到当前周
+            const currentWeek = '12-3';
+            if (!workPlans[currentWeek]) {
+                workPlans[currentWeek] = [];
+            }
+            workPlans[currentWeek].push(newTask);
+            
+            // 重新渲染
+            renderTable(getAllTasks());
+            
+            // 保存到本地存储
+            saveData();
+        }
+
+        // 编辑任务
+        function editTask(id) {
+            // 找到任务
+            let task = null;
+            for (let week in workPlans) {
+                const foundTask = workPlans[week].find(t => t.id === id);
+                if (foundTask) {
+                    task = foundTask;
+                    break;
+                }
+            }
+            
+            if (!task) return;
+            
+            const newTask = prompt('修改工作事项:', task.task);
+            if (newTask !== null) task.task = newTask;
+            
+            const newProgress = parseInt(prompt('修改进度 (0-100):', task.progress));
+            if (!isNaN(newProgress)) task.progress = newProgress;
+            
+            // 重新渲染
+            renderTable(getAllTasks());
+            
+            // 保存到本地存储
+            saveData();
+        }
+
+        // 删除任务
+        function deleteTask(id) {
+            if (!confirm('确定要删除这个任务吗？')) return;
+            
+            for (let week in workPlans) {
+                const taskIndex = workPlans[week].findIndex(task => task.id === id);
+                if (taskIndex !== -1) {
+                    workPlans[week].splice(taskIndex, 1);
+                    break;
+                }
+            }
+            
+            // 重新渲染
+            renderTable(getAllTasks());
+            
+            // 保存到本地存储
+            saveData();
+        }
+
+        // 更新优先级
+        function updatePriority(id, priority) {
+            for (let week in workPlans) {
+                const taskIndex = workPlans[week].findIndex(task => task.id === id);
+                if (taskIndex !== -1) {
+                    workPlans[week][taskIndex].priority = priority;
+                    break;
+                }
+            }
+            
+            // 保存到本地存储
+            saveData();
+        }
+
+        // 保存数据到本地存储
+        function saveData() {
+            try {
+                localStorage.setItem('workPlans', JSON.stringify(workPlans));
+                localStorage.setItem('lastSaved', new Date().toISOString());
+                
+                alert('数据已保存！');
+                return true;
+            } catch (e) {
+                console.error('保存数据失败:', e);
+                alert('保存失败，请检查浏览器设置。');
+                return false;
+            }
+        }
+
+        // 从本地存储加载数据
+        function loadFromLocalStorage() {
+            try {
+                const savedData = localStorage.getItem('workPlans');
+                if (savedData) {
+                    workPlans = JSON.parse(savedData);
+                }
+            } catch (e) {
+                console.error('加载数据失败:', e);
+            }
+        }
+
+        // 导出到Excel
+        function exportToExcel() {
+            const allTasks = getAllTasks();
+            
+            // 准备CSV数据
+            let csv = '序号,工作事项,业务分类,责任人,计划开始时间,计划完成时间,当前进度,状态,优先级\n';
+            
+            allTasks.forEach((task, index) => {
+                const status = task.status || (task.progress >= 100 ? '已完成' : task.progress > 0 ? '进行中' : '未开始');
+                const priority = task.priority === 'high' ? '高' : task.priority === 'medium' ? '中' : '低';
+                
+                csv += `${index + 1},"${task.task}","${task.category}","${task.responsible}","${task.startDate}","${task.endDate}",${task.progress}%,"${status}","${priority}"\n`;
+            });
+            
+            // 创建下载链接
+            const blob = new Blob(['\uFEFF' + csv], { type: 'text/csv;charset=utf-8;' });
+            const link = document.createElement('a');
+            const url = URL.createObjectURL(blob);
+            
+            link.setAttribute('href', url);
+            link.setAttribute('download', `工作计划表_${new Date().toISOString().slice(0, 10)}.csv`);
+            link.style.visibility = 'hidden';
+            
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+
+        // 筛选功能
+        function filterByStatus() {
+            const status = document.getElementById('status-filter').value;
+            const search = document.getElementById('search-box').value.toLowerCase();
+            
+            applyFilters(status, search);
+        }
+
+        function searchTable() {
+            const status = document.getElementById('status-filter').value;
+            const search = document.getElementById('search-box').value.toLowerCase();
+            
+            applyFilters(status, search);
+        }
+
+        function applyFilters(status, search) {
+            let allTasks = getAllTasks();
+            
+            // 按状态筛选
+            if (status !== 'all') {
+                allTasks = allTasks.filter(task => {
+                    const taskStatus = task.status || (task.progress >= 100 ? '已完成' : task.progress > 0 ? '进行中' : '未开始');
+                    return taskStatus === status;
+                });
+            }
+            
+            // 搜索
+            if (search) {
+                allTasks = allTasks.filter(task => 
+                    task.task.toLowerCase().includes(search) || 
+                    task.responsible.toLowerCase().includes(search) ||
+                    task.category.toLowerCase().includes(search)
+                );
+            }
+            
+            // 重新渲染
+            renderTable(allTasks);
+        }
+    </script>
+</body>
+</html>
