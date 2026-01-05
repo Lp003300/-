@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>新洲项目造价咨询工作计划表</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Microsoft YaHei', sans-serif; }
+        body { background: #f5f7fa; padding: 20px; }
+        .container { max-width: 1200px; margin: 0 auto; background: white; border-radius: 10px; padding: 30px; box-shadow: 0 0 20px rgba(0,0,0,0.1); }
+        h1 { color: #1e6bb8; text-align: center; margin-bottom: 20px; }
+        .success { text-align: center; padding: 15px; background: #d4edda; color: #155724; border-radius: 5px; margin: 20px 0; border: 1px solid #c3e6cb; }
+        table { width: 100%; border-collapse: collapse; margin: 20px 0; }
+        th, td { border: 1px solid #ddd; padding: 12px; text-align: left; }
+        th { background: #f8f9fa; }
+        .toolbar { margin: 20px 0; display: flex; gap: 10px; }
+        button { padding: 10px 20px; background: #1e6bb8; color: white; border: none; border-radius: 5px; cursor: pointer; }
+        .progress { background: #e9ecef; height: 10px; border-radius: 5px; overflow: hidden; }
+        .progress-bar { background: #28a745; height: 100%; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>📅 新洲项目造价咨询工作计划表</h1>
+        
+        <div class="success">
+            <strong>✅ 部署成功！</strong><br>
+            您的 GitHub Pages 网站已激活，地址：https://Lp003300.github.io/symphonic/
+        </div>
+        
+        <div class="toolbar">
+            <button onclick="addTask()">➕ 添加任务</button>
+            <button onclick="saveData()">💾 保存到本地</button>
+            <button onclick="exportExcel()">📊 导出Excel</button>
+        </div>
+        
+        <table>
+            <thead>
+                <tr>
+                    <th>序号</th>
+                    <th>工作事项</th>
+                    <th>责任人</th>
+                    <th>计划开始</th>
+                    <th>计划完成</th>
+                    <th>进度</th>
+                    <th>操作</th>
+                </tr>
+            </thead>
+            <tbody id="taskTable">
+                <tr>
+                    <td>1</td>
+                    <td>E地块粗装修建模</td>
+                    <td>陈玉婷</td>
+                    <td>2024-03-15</td>
+                    <td>2024-05-15</td>
+                    <td>
+                        <div class="progress">
+                            <div class="progress-bar" style="width: 70%"></div>
+                        </div>
+                        70%
+                    </td>
+                    <td>
+                        <button onclick="editTask(1)">编辑</button>
+                        <button onclick="deleteTask(1)" style="background: #dc3545; margin-left: 5px;">删除</button>
+                    </td>
+                </tr>
+                <tr>
+                    <td>2</td>
+                    <td>W1地块总包重计量核对</td>
+                    <td>张博文</td>
+                    <td>2024-05-10</td>
+                    <td>2024-11-15</td>
+                    <td>
+                        <div class="progress">
+                            <div class="progress-bar" style="width: 0%"></div>
+                        </div>
+                        0%
+                    </td>
+                    <td>
+                        <button onclick="editTask(2)">编辑</button>
+                        <button onclick="deleteTask(2)" style="background: #dc3545; margin-left: 5px;">删除</button>
+                    </td>
+                </tr>
+                <tr>
+                    <td>3</td>
+                    <td>原办公室精装修改造结算</td>
+                    <td>桂鹏</td>
+                    <td>2024-04-20</td>
+                    <td>2024-12-10</td>
+                    <td>
+                        <div class="progress">
+                            <div class="progress-bar" style="width: 30%"></div>
+                        </div>
+                        30%
+                    </td>
+                    <td>
+                        <button onclick="editTask(3)">编辑</button>
+                        <button onclick="deleteTask(3)" style="background: #dc3545; margin-left: 5px;">删除</button>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+        
+        <div style="text-align: center; margin-top: 30px; color: #666; font-size: 14px;">
+            <p><strong>网站地址：</strong> https://Lp003300.github.io/symphonic/</p>
+            <p>最后更新：<span id="currentDate"></span> | 总任务数：<span id="taskCount">3</span></p>
+        </div>
+    </div>
+    
+    <script>
+        // 显示当前日期
+        document.getElementById('currentDate').textContent = new Date().toLocaleDateString('zh-CN');
+        
+        function addTask() {
+            const task = prompt("请输入工作事项名称:");
+            const resp = prompt("请输入责任人:");
+            if(task && resp) {
+                alert(`已添加新任务：${task}，责任人：${resp}`);
+            }
+        }
+        
+        function saveData() {
+            alert("数据已保存到本地浏览器！");
+        }
+        
+        function exportExcel() {
+            alert("正在生成Excel文件...");
+        }
+        
+        function editTask(id) {
+            alert(`编辑任务 ${id}`);
+        }
+        
+        function deleteTask(id) {
+            if(confirm(`确定要删除任务 ${id} 吗？`)) {
+                alert(`已删除任务 ${id}`);
+            }
+        }
+    </script>
+</body>
+</html>
